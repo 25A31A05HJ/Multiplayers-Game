@@ -4,7 +4,9 @@
 
 An NPC (non-player character) finds the optimal path to a player on a map full of obstacles. When it cannot see any player, it wanders around using depth-first search.
 
-🔗 **Live demo:** [https://multiplayers-game-kxrc95y4jkyudh2jc6bygy.streamlit.app/](https://YOUR-APP-LINK.streamlit.app)
+🔗 **Live demo:** [https://multiplayers-game-kxrc95y4jkyudh2jc6bygy.streamlit.app/](
+multiplayers-game-kxrc95y4jkyudh2jc6bygy
+.streamlit.app)
 
 ## Features
 
