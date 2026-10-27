@@ -26,7 +26,17 @@ import streamlit as st
 from matplotlib.colors import ListedColormap
 
 ROOT = Path(__file__).resolve().parent
-BACKEND_DIR = ROOT / "backend"
+
+
+def _find_backend_dir() -> Path:
+    """Folder that holds main.cpp + pathfinding.hpp (backend/ or next to app.py)."""
+    for d in (ROOT / "backend", ROOT):
+        if (d / "main.cpp").is_file() and (d / "pathfinding.hpp").is_file():
+            return d
+    return ROOT / "backend"
+
+
+BACKEND_DIR = _find_backend_dir()
 EXE = BACKEND_DIR / ("npc_ai.exe" if platform.system() == "Windows" else "npc_ai")
 
 PLAYER_COLORS = ["#1d7be0", "#2a9d8f", "#f4a261", "#9b5de5", "#06d6a0", "#ef476f", "#118ab2", "#8d6e63"]
@@ -38,6 +48,14 @@ NPC_COLOR = "#e63946"
 def build_backend() -> str:
     """Compile backend/main.cpp (only if the binary is missing or outdated)."""
     sources = [BACKEND_DIR / "main.cpp", BACKEND_DIR / "pathfinding.hpp"]
+    missing = [s.name for s in sources if not s.is_file()]
+    if missing:
+        found = sorted(p.name for p in ROOT.rglob("*") if p.is_file() and ".git" not in p.parts)
+        raise RuntimeError(
+            f"C++ source file(s) not found: {', '.join(missing)}. Put main.cpp and pathfinding.hpp in a "
+            f"folder named 'backend' next to app.py (or next to app.py itself) and push again.\n"
+            f"Files the app can see: {', '.join(found)}"
+        )
     newest_source = max(s.stat().st_mtime for s in sources)
     if EXE.exists() and EXE.stat().st_mtime >= newest_source:
         return str(EXE)
